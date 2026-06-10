@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0201" xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ns1="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2026-04-26T01:12:25"/>
+  <contentHeader name="Unnamed" modificationDateTime="2026-04-26T01:12:25">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="16" y="16"/>
+      </fbd>
+      <ld>
+        <scaling x="16" y="16"/>
+      </ld>
+      <sfc>
+        <scaling x="16" y="16"/>
+      </sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="main" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="temperature">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="25"/>
+              </initialValue>
+            </variable>
+            <variable name="high_limit">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="70"/>
+              </initialValue>
+            </variable>
+            <variable name="critical_limit">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="90"/>
+              </initialValue>
+            </variable>
+            <variable name="sensor_fault">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+            </variable>
+            <variable name="alarm_high">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+            </variable>
+            <variable name="alarm_critical">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE"/>
+              </initialValue>
+            </variable>
+            <variable name="system_ok">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="TRUE"/>
+              </initialValue>
+            </variable>
+            <variable name="heater_on">
+              <type>
+                <BOOL/>
+              </type>
+              <initialValue>
+                <simpleValue value="TRUE"/>
+              </initialValue>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[IF sensor_fault THEN
+    alarm_high := FALSE;
+    alarm_critical := FALSE;
+    system_ok := FALSE;
+    heater_on := FALSE;
+
+ELSE
+    IF heater_on THEN
+        temperature := temperature + 1;
+    ELSE
+        temperature := temperature - 1;
+    END_IF;
+
+    IF temperature < 20 THEN
+        heater_on := TRUE;
+    END_IF;
+
+    IF temperature > 75 THEN
+        heater_on := FALSE;
+    END_IF;
+
+    alarm_high := (temperature >= high_limit);
+    alarm_critical := (temperature >= critical_limit);
+
+    system_ok := NOT alarm_critical;
+END_IF;]]></xhtml:p>
+          </ST>
+        </body>
+        <documentation>
+          <xhtml:p><![CDATA[ ]]></xhtml:p>
+        </documentation>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations>
+      <configuration name="Config0">
+        <resource name="Res0">
+          <task name="task0" priority="1" interval="T#20ms">
+            <pouInstance name="instance0" typeName="main"/>
+          </task>
+        </resource>
+      </configuration>
+    </configurations>
+  </instances>
+</project>
